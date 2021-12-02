@@ -64,14 +64,14 @@ namespace Students
         public void ExecBestInTopic(string command)
         {
             string topic = command.Substring(command.IndexOf(' ') + 1);
-            Console.WriteLine(GetBestTopicStudent(students, topic));
+            Console.WriteLine(GetBestStudent(students, topic));
         }
         public void ExecBestInClass(string command)
         {
             string[] commands = command.Split(" ");
             string topic = commands[1];
             int classNumber = Convert.ToInt32(commands.Last());
-            Console.WriteLine(GetBestClassStudent(students, topic, classNumber));
+            Console.WriteLine(GetBestStudent(students, topic, classNumber));
         }
 
         public void ExecBest()
@@ -84,90 +84,57 @@ namespace Students
             Console.WriteLine("Command was not recognized. Please try again.");
         }
 
-        public string GetBestTopicStudent(List<Student> studentList, string topic)
+        public string GetBestStudent(List<Student> studentList, string topic = "", int classNumber = 0)
         {
+            if (classNumber > 0)
+            {
+                List<Student> filteredStudentList = studentList.FindAll(student => student.ClassNumber == classNumber);
+                studentList = filteredStudentList;
+            }
+
             Student bestStudent = null;
             Student prevStudent = null;
-            double bestAverageGrades = 0;
+            double bestAverage = 0;
 
             studentList.ForEach(student =>
             {
+                double averageGrades = 0;
+                double prevAverageGrades = 0;
+
                 if (bestStudent == null)
                 {
                     bestStudent = student;
                     prevStudent = student;
                 }
 
-                double averageGrades = student.Grades.GetClassAverageGrades(topic);
-                double prevAverageGrades = prevStudent.Grades.GetClassAverageGrades(topic);
+                if (topic == "")
+                {
+                    averageGrades = student.GetTotalAverage();
+                    prevAverageGrades = prevStudent.GetTotalAverage();
+                }
+                else
+                {
+                    averageGrades = student.Grades.GetTopicAverageGrades(topic);
+                    prevAverageGrades = prevStudent.Grades.GetTopicAverageGrades(topic);
+                }
 
                 if (averageGrades >= prevAverageGrades)
                 {
                     bestStudent = student;
-                    bestAverageGrades = averageGrades;
+                    bestAverage = averageGrades;
                 }
                 prevStudent = student;
             });
 
-            return $"Best student in {topic}: {bestStudent.Name} {bestStudent.Surname} with an average of {bestAverageGrades}";
-        }
-
-        public string GetBestClassStudent(List<Student> studentList, string topic, int classNumber)
-        {
-            List<Student> filteredStudentList = studentList.FindAll(student => student.ClassNumber == classNumber);
-
-            Student bestStudent = null;
-            Student prevStudent = null;
-            double bestAverageGrades = 0;
-
-            filteredStudentList.ForEach(student =>
+            if (classNumber > 0)
             {
-                if (bestStudent == null)
-                {
-                    bestStudent = student;
-                    prevStudent = student;
-                }
-
-                double averageGrades = student.Grades.GetClassAverageGrades(topic);
-                double prevAverageGrades = prevStudent.Grades.GetClassAverageGrades(topic);
-
-                if (averageGrades >= prevAverageGrades)
-                {
-                    bestStudent = student;
-                    bestAverageGrades = averageGrades;
-                }
-                prevStudent = student;
-            });
-
-            return $"Best student in {topic} from class {classNumber}: {bestStudent.Name} {bestStudent.Surname} with an average of {bestAverageGrades}";
-        }
-
-        public string GetBestStudent(List<Student> studentList)
-        {
-            Student bestStudent = null;
-            Student prevStudent = null;
-            double bestTotalAverage = 0;
-
-            studentList.ForEach(student =>
+                return $"Best student in {topic} from class {classNumber}: {bestStudent.Name} {bestStudent.Surname} with an average of {bestAverage}";
+            }
+            if (topic == "")
             {
-                if (bestStudent == null)
-                {
-                    bestStudent = student;
-                    prevStudent = student;
-                }
-
-                double totalAverage = student.GetTotalAverage();
-                double prevTotalAverage = prevStudent.GetTotalAverage();
-
-                if (totalAverage >= prevTotalAverage)
-                {
-                    bestStudent = student;
-                    bestTotalAverage = totalAverage;
-                }
-                prevStudent = student;
-            });
-
-            return $"Best student in all classes: {bestStudent.Name} {bestStudent.Surname} with a total average of {bestTotalAverage}";
+                return $"Best student in all classes: {bestStudent.Name} {bestStudent.Surname} with a total average of {bestAverage}";
+            }
+            return $"Best student in {topic}: {bestStudent.Name} {bestStudent.Surname} with an average of {bestAverage}";
         }
     }
 }
