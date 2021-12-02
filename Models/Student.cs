@@ -23,6 +23,11 @@ namespace Students.Models
             Grades.Biology = GenerateGrades();
         }
 
+        public string GetStudentInfo()
+        {
+            return $"Name: {Name} {Surname}.";
+        }
+
         private List<int> GenerateGrades()
         {
             List<int> randomGrades = new List<int>();
@@ -45,8 +50,8 @@ namespace Students.Models
             {
                 List<string> classNames = GetClassNames(gradesProps);
                 classNames.ForEach(className => {
-                    gradesListString.Add($"Grades for {className}: {string.Join(", ", GetClassGrades(className))}");
-                    gradesListString.Add($"Average grades for {className}: {GetClassAverageGrades(className)}");
+                    gradesListString.Add($"Grades for {className}: {string.Join(", ", Grades.GetClassGrades(className))}");
+                    gradesListString.Add($"Average grades for {className}: {Grades.GetClassAverageGrades(className)}");
                 });
             }
 
@@ -62,20 +67,6 @@ namespace Students.Models
             }
 
             return classNames;
-        }
-
-        private List<int> GetClassGrades(string className)
-        {
-            List<int> grades = (List<int>)Grades.GetType()?.GetProperty(className)?.GetValue(Grades, null);
-
-            return grades;
-        }
-
-        public double GetClassAverageGrades(string className)
-        {
-            List<int> grades = (List<int>)Grades.GetType()?.GetProperty(className)?.GetValue(Grades, null);
-
-            return grades.Average();
         }
     }
 }

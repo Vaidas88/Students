@@ -51,7 +51,7 @@ namespace Students
 
             Console.WriteLine("Info about student: \n");
 
-            Console.WriteLine($"Name: {student.Name} {student.Surname}.");
+            Console.WriteLine(student.GetStudentInfo());
 
             student.GetGradesToString().ForEach(entry => Console.WriteLine(entry));
         }
