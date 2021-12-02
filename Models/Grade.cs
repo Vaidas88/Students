@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 
 namespace Students.Models
 {
@@ -13,16 +9,32 @@ namespace Students.Models
 
         public List<int> GetClassGrades(string className)
         {
-            List<int> grades = (List<int>)this.GetType().GetProperty(className).GetValue(this, null);
-            
-            return grades;
+            Type gradeType = this.GetType();
+            PropertyInfo? gradeProp = gradeType.GetProperty(className);
+            object? grades = gradeType.GetProperty(className)?.GetValue(this, null);
+
+            if(grades is not null)
+            {
+                return (List<int>)grades;
+            }
+
+            return new List<int>();
         }
 
         public double GetClassAverageGrades(string className)
         {
-            List<int> grades = (List<int>)this.GetType().GetProperty(className).GetValue(this, null);
+            Type gradeType = this.GetType();
+            PropertyInfo? gradeProp = gradeType.GetProperty(className);
+            object? grades = gradeType.GetProperty(className)?.GetValue(this, null);
+            
+            if(grades is not null)
+            {
+                List<int> newGrades = (List<int>)grades;
 
-            return grades.Average();
+                return newGrades.Average();
+            }
+
+            return 0;
         }
     }
 }
