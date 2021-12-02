@@ -27,6 +27,6 @@ while (true)
     }
     else
     {
-        Console.WriteLine("Command was not recognized. Please try again.");
+        studentConsole.CommandNotFound();
     }
 }

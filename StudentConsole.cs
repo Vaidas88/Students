@@ -28,13 +28,14 @@ namespace Students
 
         public void ExecList()
         {
-            students.ForEach(student => Console.WriteLine($"{student.Id}. {student.Name} {student.Surname}."));
+            students.ForEach(student => Console.WriteLine($"{student.GetStudentInfo()}."));
         }
 
         public void ExecPick(string command)
         {
             int id = 0;
             Student student = new Student();
+            
             try
             {
                 id = Convert.ToInt32(command.Split(" ").Last());
@@ -54,6 +55,11 @@ namespace Students
             Console.WriteLine(student.GetStudentInfo());
 
             student.GetGradesToString().ForEach(entry => Console.WriteLine(entry));
+        }
+
+        public void CommandNotFound()
+        {
+            Console.WriteLine("Command was not recognized. Please try again.");
         }
     }
 }

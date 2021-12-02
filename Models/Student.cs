@@ -25,7 +25,7 @@ namespace Students.Models
 
         public string GetStudentInfo()
         {
-            return $"Name: {Name} {Surname}.";
+            return $"{Id}. {Name} {Surname}.";
         }
 
         private List<int> GenerateGrades()
@@ -58,10 +58,10 @@ namespace Students.Models
             return gradesListString;
         }
 
-        private List<string> GetClassNames(PropertyInfo[] gradesClassProps){
+        private List<string> GetClassNames(PropertyInfo[] gradesProps){
             List<string> classNames = new List<string>();
 
-            foreach(var gradesClassProp in gradesClassProps)
+            foreach(var gradesClassProp in gradesProps)
             {
                 classNames.Add(gradesClassProp.Name);
             }
