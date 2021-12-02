@@ -8,7 +8,7 @@ namespace Students.Models
 {
     public class Grade
     {
-        public List<int> Math = new List<int>();
-        public List<int> Biology = new List<int>();
+        public List<int>? Math { get; set; }
+        public List<int>? Biology { get; set; }
     }
 }

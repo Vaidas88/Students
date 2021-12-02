@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace Students.Models
 {
@@ -10,8 +11,8 @@ namespace Students.Models
     {
         private static int IdCounter = 0;
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Surname { get; set; }
+        public string Name { get; set; } = "";
+        public string Surname { get; set; } = "";
         public Grade Grades = new Grade();
 
         public Student()
@@ -35,32 +36,46 @@ namespace Students.Models
             return randomGrades;
         }
 
-        public string GradesToString(string className)
+        public List<string> GetGradesToString()
         {
-            if (className == "Math")
+            List<string> gradesListString = new List<string>();
+            PropertyInfo[] gradesProps = Grades.GetType().GetProperties();
+
+            if(gradesProps.Length > 0)
             {
-                return string.Join(", ", this.Grades.Math);
-            }
-            if (className == "Biology")
-            {
-                return string.Join(", ", this.Grades.Biology);
+                List<string> classNames = GetClassNames(gradesProps);
+                classNames.ForEach(className => {
+                    gradesListString.Add($"Grades for {className}: {string.Join(", ", GetClassGrades(className))}");
+                    gradesListString.Add($"Average grades for {className}: {GetClassAverageGrades(className)}");
+                });
             }
 
-            return "";
+            return gradesListString;
         }
 
-        public double AverageGrades(string className)
-        {
-            if (className == "Math")
+        private List<string> GetClassNames(PropertyInfo[] gradesClassProps){
+            List<string> classNames = new List<string>();
+
+            foreach(var gradesClassProp in gradesClassProps)
             {
-                return this.Grades.Math.Average();
-            }
-            if (className == "Biology")
-            {
-                return this.Grades.Biology.Average();
+                classNames.Add(gradesClassProp.Name);
             }
 
-            return 0;
+            return classNames;
+        }
+
+        private List<int> GetClassGrades(string className)
+        {
+            List<int> grades = (List<int>)Grades.GetType()?.GetProperty(className)?.GetValue(Grades, null);
+
+            return grades;
+        }
+
+        public double GetClassAverageGrades(string className)
+        {
+            List<int> grades = (List<int>)Grades.GetType()?.GetProperty(className)?.GetValue(Grades, null);
+
+            return grades.Average();
         }
     }
 }

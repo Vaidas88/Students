@@ -6,7 +6,8 @@ while (true)
 {
     Console.WriteLine("Please enter command: 'Add', 'List', 'Pick {id}', 'Exit':\n");
 
-    string command = Console.ReadLine().ToLower();
+    string command = Console.ReadLine() ?? "";
+    command = command.ToLower();
 
     if (command == "add")
     {

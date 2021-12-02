@@ -14,10 +14,10 @@ namespace Students
         public void ExecAdd()
         {
             Console.WriteLine("Please enter student's First Name:");
-            string firstName = Console.ReadLine();
+            string firstName = Console.ReadLine() ?? "";
 
             Console.WriteLine("Please enter student's Sure Name:");
-            string sureName = Console.ReadLine();
+            string sureName = Console.ReadLine() ?? "";
 
             Student student = new Student();
             student.Name = firstName;
@@ -53,13 +53,7 @@ namespace Students
 
             Console.WriteLine($"Name: {student.Name} {student.Surname}.");
 
-            Console.WriteLine("Grades for Math:");
-            Console.WriteLine(student.GradesToString("Math"));
-            Console.WriteLine($"Average grade for Math: {student.AverageGrades("Math")}");
-
-            Console.WriteLine("Grades for Biology:");
-            Console.WriteLine(student.GradesToString("Biology"));
-            Console.WriteLine($"Average grade for Biology: {student.AverageGrades("Biology")}");
+            student.GetGradesToString().ForEach(entry => Console.WriteLine(entry));
         }
     }
 }
