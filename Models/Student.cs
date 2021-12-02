@@ -8,7 +8,8 @@ namespace Students.Models
         public int Id { get; set; }
         public string Name { get; set; } = "";
         public string Surname { get; set; } = "";
-        public Grade Grades = new Grade();
+        public int ClassNumber { get; set; } = 1;
+        public Grade Grades { get; set; } = new Grade();
 
         public Student()
         {
@@ -16,11 +17,18 @@ namespace Students.Models
             Id = IdCounter;
             Grades.Math = GenerateGrades();
             Grades.Biology = GenerateGrades();
+            ClassNumber = GenerateClassNumber();
         }
 
         public string GetStudentInfo()
         {
-            return $"{Id}. {Name} {Surname}.";
+            return $"{Id}. {Name} {Surname} from class {ClassNumber}";
+        }
+
+        private int GenerateClassNumber()
+        {
+            Random random = new Random();
+            return random.Next(1, 5);
         }
 
         private List<int> GenerateGrades()
@@ -41,27 +49,59 @@ namespace Students.Models
             List<string> gradesListString = new List<string>();
             PropertyInfo[] gradesProps = Grades.GetType().GetProperties();
 
-            if(gradesProps.Length > 0)
+            if (gradesProps.Length > 0)
             {
-                List<string> classNames = GetClassNames(gradesProps);
-                classNames.ForEach(className => {
-                    gradesListString.Add($"Grades for {className}: {string.Join(", ", Grades.GetClassGrades(className))}");
-                    gradesListString.Add($"Average grades for {className}: {Grades.GetClassAverageGrades(className)}");
+                List<string> topics = GetTopics(gradesProps);
+                topics.ForEach(topic =>
+                {
+                    List<int> grades = Grades.GetClassGrades(topic);
+                    if (grades.Count > 0)
+                    {
+                        gradesListString.Add($"Grades for {topic}: {string.Join(", ", Grades.GetTopicGrades(topic))}");
+                        gradesListString.Add($"Average grades for {topic}: {Grades.GetTopicAverageGrades(topic)}");
+                    }
+
                 });
             }
 
             return gradesListString;
         }
 
-        private List<string> GetClassNames(PropertyInfo[] gradesProps){
-            List<string> classNames = new List<string>();
+        public double GetTotalAverage()
+        {
+            PropertyInfo[] gradesProps = Grades.GetType().GetProperties();
+            double totalAverage = 0;
+            double divider = 1;
 
-            foreach(var gradesClassProp in gradesProps)
+            if (gradesProps.Length > 0)
             {
-                classNames.Add(gradesClassProp.Name);
+                List<string> topics = GetTopics(gradesProps);
+                topics.ForEach(topic =>
+                {
+                    List<int> grades = Grades.GetClassGrades(topic);
+                    if (grades.Count > 0)
+                    {
+                        totalAverage += Grades.GetClassAverageGrades(topic);
+                        totalAverage = totalAverage / divider;
+                        divider++;
+                    }
+
+                });
             }
 
-            return classNames;
+            return totalAverage;
+        }
+
+        private List<string> GetTopics(PropertyInfo[] gradesProps)
+        {
+            List<string> topics = new List<string>();
+
+            foreach (var gradesClassProp in gradesProps)
+            {
+                topics.Add(gradesClassProp.Name);
+            }
+
+            return topics;
         }
     }
 }

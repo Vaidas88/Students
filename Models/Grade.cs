@@ -6,14 +6,14 @@ namespace Students.Models
     {
         public List<int>? Math { get; set; }
         public List<int>? Biology { get; set; }
+        public List<int>? Test { get; set; }
 
-        public List<int> GetClassGrades(string className)
+        public List<int> GetTopicGrades(string topic)
         {
             Type gradeType = this.GetType();
-            PropertyInfo? gradeProp = gradeType.GetProperty(className);
-            object? grades = gradeType.GetProperty(className)?.GetValue(this, null);
+            object? grades = gradeType.GetProperty(topic)?.GetValue(this, null);
 
-            if(grades is not null)
+            if (grades is not null)
             {
                 return (List<int>)grades;
             }
@@ -21,13 +21,12 @@ namespace Students.Models
             return new List<int>();
         }
 
-        public double GetClassAverageGrades(string className)
+        public double GetTopicAverageGrades(string topic)
         {
             Type gradeType = this.GetType();
-            PropertyInfo? gradeProp = gradeType.GetProperty(className);
-            object? grades = gradeType.GetProperty(className)?.GetValue(this, null);
-            
-            if(grades is not null)
+            object? grades = gradeType.GetProperty(topic)?.GetValue(this, null);
+
+            if (grades is not null)
             {
                 List<int> newGrades = (List<int>)grades;
 
