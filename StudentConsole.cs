@@ -38,7 +38,7 @@ namespace Students
         public void ExecPick(string command)
         {
             int id = 0;
-            Student student = null;
+            Student? student = null;
 
             try
             {
@@ -56,9 +56,9 @@ namespace Students
 
             Console.WriteLine("Info about student: \n");
 
-            Console.WriteLine(student.GetStudentInfo());
+            Console.WriteLine(student?.GetStudentInfo());
 
-            student.GetGradesToString().ForEach(entry => Console.WriteLine(entry));
+            student?.GetGradesToString().ForEach(entry => Console.WriteLine(entry));
         }
 
         public void ExecBestInTopic(string command)
@@ -92,8 +92,30 @@ namespace Students
                 studentList = filteredStudentList;
             }
 
-            Student bestStudent = null;
-            Student prevStudent = null;
+            Student bestStudent = FindBestStudent(studentList, topic);
+            
+            if (classNumber > 0 && bestStudent != null)
+            {
+                double averageGrades = bestStudent.Grades.GetTopicAverageGrades(topic);
+                return $"Best student in {topic} from class {classNumber}: {bestStudent.Name} {bestStudent.Surname} with an average of {averageGrades}";
+            }
+            if (topic == "" && bestStudent != null)
+            {
+                double averageGrades = bestStudent.GetTotalAverage();
+                return $"Best student in all topics: {bestStudent.Name} {bestStudent.Surname} with a total average of {averageGrades}";
+            }
+            if(bestStudent != null)
+            {
+                double averageGrades = bestStudent.Grades.GetTopicAverageGrades(topic);
+                return $"Best student in {topic}: {bestStudent.Name} {bestStudent.Surname} with an average of {averageGrades}";
+            }
+            return string.Empty;
+        }
+
+        private Student FindBestStudent(List<Student> studentList, string topic)
+        {
+            Student? bestStudent = null;
+            Student? prevStudent = null;
             double bestAverage = 0;
 
             studentList.ForEach(student =>
@@ -107,7 +129,7 @@ namespace Students
                     prevStudent = student;
                 }
 
-                if (topic == "")
+                if (topic == "" && prevStudent != null)
                 {
                     averageGrades = student.GetTotalAverage();
                     prevAverageGrades = prevStudent.GetTotalAverage();
@@ -115,7 +137,10 @@ namespace Students
                 else
                 {
                     averageGrades = student.Grades.GetTopicAverageGrades(topic);
-                    prevAverageGrades = prevStudent.Grades.GetTopicAverageGrades(topic);
+                    if(prevStudent != null)
+                    {
+                        prevAverageGrades = prevStudent.Grades.GetTopicAverageGrades(topic);
+                    }
                 }
 
                 if (averageGrades >= prevAverageGrades)
@@ -126,15 +151,7 @@ namespace Students
                 prevStudent = student;
             });
 
-            if (classNumber > 0)
-            {
-                return $"Best student in {topic} from class {classNumber}: {bestStudent.Name} {bestStudent.Surname} with an average of {bestAverage}";
-            }
-            if (topic == "")
-            {
-                return $"Best student in all classes: {bestStudent.Name} {bestStudent.Surname} with a total average of {bestAverage}";
-            }
-            return $"Best student in {topic}: {bestStudent.Name} {bestStudent.Surname} with an average of {bestAverage}";
+            return bestStudent;
         }
     }
 }

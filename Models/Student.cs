@@ -57,7 +57,7 @@ namespace Students.Models
                     List<int> grades = Grades.GetTopicGrades(topic);
                     if (grades.Count > 0)
                     {
-                        gradesListString.Add($"Grades for {topic}: {string.Join(", ", Grades.GetTopicGrades(topic))}");
+                        gradesListString.Add($"Grades for {topic}: {string.Join(", ", grades)}");
                         gradesListString.Add($"Average grades for {topic}: {Grades.GetTopicAverageGrades(topic)}");
                     }
 
@@ -71,22 +71,21 @@ namespace Students.Models
         {
             PropertyInfo[] gradesProps = Grades.GetType().GetProperties();
             double totalAverage = 0;
-            double divider = 1;
+            double divider = 0;
 
             if (gradesProps.Length > 0)
             {
                 List<string> topics = GetTopics(gradesProps);
                 topics.ForEach(topic =>
                 {
-                    List<int> grades = Grades.GetTopicGrades(topic);
-                    if (grades.Count > 0)
+                    double averageGrades = Grades.GetTopicAverageGrades(topic);
+                    if (averageGrades > 0)
                     {
-                        totalAverage += Grades.GetTopicAverageGrades(topic);
-                        totalAverage = totalAverage / divider;
+                        totalAverage += averageGrades;
                         divider++;
                     }
-
                 });
+                totalAverage = totalAverage / divider;
             }
 
             return totalAverage;
